@@ -19,6 +19,10 @@ func setRouter() *gin.Engine {
 	{
 		api.POST("/signup", controllers.SignUp)
 		api.POST("/signin", controllers.SignIn)
+
+    api.POST("/posts", controllers.CreatePost)
+		api.GET("/posts", controllers.GetPosts)
+
 		api.GET("/hello", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"msg": "world"})
 		})
