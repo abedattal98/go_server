@@ -8,5 +8,5 @@ type Post struct {
   Content    string    `binding:"required,min=5,max=5000"`
   CreatedAt  time.Time
   ModifiedAt time.Time
-  UserID     int `json:"-"`
+  UserID     int
 }

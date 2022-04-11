@@ -17,6 +17,6 @@ func FetchUser(id int) (*models.User, error) {
 			return u, nil
 		}
 	}
-	err = errors.New("Current context user not set")
+	err = errors.New("User don't exists")
 	return nil, err
 }

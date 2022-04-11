@@ -39,7 +39,7 @@ func Authorization(ctx *gin.Context) {
   ctx.Next()
 }
 
-func currentUser(ctx *gin.Context) (*models.User, error) {
+func CurrentUser(ctx *gin.Context) (*models.User, error) {
 	var err error
 	_user, exists := ctx.Get("user")
 	if !exists {

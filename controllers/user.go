@@ -6,6 +6,7 @@ import (
 	"rgb/models"
 	"rgb/store"
 	"rgb/services"
+	"math/rand"
 
 )
 
@@ -15,6 +16,7 @@ func SignUp(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
 	}
+	user.ID = rand.Intn(100);
 	store.Users = append(store.Users, user)
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "Signed up successfully.",
