@@ -1,7 +1,7 @@
 package main
 
 
-import "rgb/internal/server"
+import "rgb/server"
 
 func main() {
   server.Start()

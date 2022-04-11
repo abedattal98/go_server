@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"rgb/internal/controllers"
+	"rgb/controllers"
 )
 
 func setRouter() *gin.Engine {

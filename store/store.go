@@ -1,7 +1,7 @@
 package store
 
 import (
-	"rgb/internal/models"
+	"rgb/models"
 )
 var Users []* models.User
 var Posts []* models.Post

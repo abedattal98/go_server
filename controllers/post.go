@@ -3,24 +3,23 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"rgb/internal/models"
-	"rgb/internal/store"
+	"rgb/models"
+	"rgb/store"
 )
 
-func SignUp(ctx *gin.Context) {
-	user := new(models.User)
-	if err := ctx.Bind(user); err != nil {
+func CreatePost(ctx *gin.Context) {
+	post := new(models.Post)
+	if err := ctx.Bind(post); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
 	}
-	store.Users = append(store.Users, user)
+	store.Posts = append(store.Posts, post)
 	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "Signed up successfully.",
-		"jwt": "123456789",
+		"msg": "Post created successfully.",
 	})
 }
 
-func SignIn(ctx *gin.Context) {
+func GetPost(ctx *gin.Context) {
 	user := new(models.User)
 	if err := ctx.Bind(user); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
@@ -36,4 +35,12 @@ func SignIn(ctx *gin.Context) {
 		}
 	}
 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"err": "Sign in failed."})
+}
+
+func GetPosts(ctx *gin.Context) {
+	posts := store.Posts;
+	ctx.JSON(http.StatusOK, 
+		posts , 
+	)
+	return
 }
