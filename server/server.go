@@ -4,6 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"rgb/controllers"
+	"rgb/services"
+	"rgb/middlewares"
+	// "rgb/conf"
+
 )
 
 func setRouter() *gin.Engine {
@@ -20,12 +24,17 @@ func setRouter() *gin.Engine {
 		api.POST("/signup", controllers.SignUp)
 		api.POST("/signin", controllers.SignIn)
 
-    api.POST("/posts", controllers.CreatePost)
-		api.GET("/posts", controllers.GetPosts)
+
 
 		api.GET("/hello", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"msg": "world"})
 		})
+	}
+	authorized := api.Group("/")
+	authorized.Use(middlewares.Authorization)
+	{
+		authorized.POST("/posts", controllers.CreatePost)
+		authorized.GET("/posts", controllers.GetPosts)
 	}
 
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
@@ -34,6 +43,9 @@ func setRouter() *gin.Engine {
 }
 
 func Start() {
+	// services.JwtSetup(conf.NewConfig().JwtSecret)
+	services.JwtSetup("test")
+
 	router := setRouter()
 
 	// Start listening and serving requests

@@ -31,7 +31,7 @@ func GetPost(ctx *gin.Context) {
 				"msg": "Signed in successfully.",
 				"jwt": "123456789",
 			})
-			return
+			return 
 		}
 	}
 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"err": "Sign in failed."})

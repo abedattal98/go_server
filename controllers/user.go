@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"rgb/models"
 	"rgb/store"
+	"rgb/services"
+
 )
 
 func SignUp(ctx *gin.Context) {
@@ -16,7 +18,7 @@ func SignUp(ctx *gin.Context) {
 	store.Users = append(store.Users, user)
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "Signed up successfully.",
-		"jwt": "123456789",
+		"jwt": services.GenerateJWT(user),
 	})
 }
 
@@ -30,7 +32,7 @@ func SignIn(ctx *gin.Context) {
 		if u.Username == user.Username && u.Password == user.Password {
 			ctx.JSON(http.StatusOK, gin.H{
 				"msg": "Signed in successfully.",
-				"jwt": "123456789",
+				"jwt": services.GenerateJWT(user),
 			})
 			return
 		}
