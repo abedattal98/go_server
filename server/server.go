@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"rgb/controllers"
-	"rgb/services"
+	"rgb/services/jwt"
 	"rgb/middlewares"
 	// "rgb/conf"
 
@@ -48,7 +48,7 @@ func setRouter() *gin.Engine {
 
 func Start() {
 	// services.JwtSetup(conf.NewConfig().JwtSecret)
-	services.JwtSetup("test")
+	jwt.JwtSetup("test")
 
 	router := setRouter()
 

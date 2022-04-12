@@ -1,4 +1,4 @@
-package services
+package jwt
 
 import (
 	"github.com/cristalhq/jwt/v4"

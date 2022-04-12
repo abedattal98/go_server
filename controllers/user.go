@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"rgb/models"
 	"rgb/services"
+	"rgb/services/jwt"
 )
 
 func SignUp(ctx *gin.Context) {
@@ -19,7 +20,7 @@ func SignUp(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "Signed up successfully.",
-		"jwt": services.GenerateJWT(user),
+		"jwt": jwt.GenerateJWT(user),
 	})
 }
 
@@ -38,6 +39,6 @@ func SignIn(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "Signed in successfully.",
-		"jwt": services.GenerateJWT(user),
+		"jwt": jwt.GenerateJWT(user),
 	})
 }

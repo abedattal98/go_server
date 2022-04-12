@@ -3,7 +3,8 @@ package middlewares
 import (
   "net/http"
   "rgb/store"
-  "rgb/services"
+  // "rgb/services"
+  "rgb/services/jwt"
   "rgb/models"
   "errors"
   "strings"
@@ -25,7 +26,7 @@ func Authorization(ctx *gin.Context) {
     ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing bearer part."})
     return
   }
-  userID, err := services.VerifyJWT(headerParts[1])
+  userID, err := jwt.VerifyJWT(headerParts[1])
   if err != nil {
     ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
     return
