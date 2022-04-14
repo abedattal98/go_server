@@ -15,16 +15,16 @@ func testSetup() *gin.Engine {
 	return gin.Default()
 }
 
-func addTestUser() *models.User {
+func addTestUser() *models.UserEntity {
 	user := &models.User{
 		Username: "batman",
 		Password: "secret123",
 	}
-	user, err := services.AddUser(user)
+	UserEntity, err := services.AddUser(user)
 	if err != nil {
 		log.Println("Error adding test user", err)
 	}
-	return user
+	return UserEntity
 }
 
 

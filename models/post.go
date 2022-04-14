@@ -1,12 +1,11 @@
 package models
 
-import "time"
-
 type Post struct {
-  ID         int
-  Title      string    `binding:"required,min=3,max=50"`
-  Content    string    `binding:"required,min=5,max=5000"`
-  CreatedAt  time.Time
-  ModifiedAt time.Time
-  UserID     int       `json:"userid" binding:"required"`
+  Title      string    `json:"title" binding:"required,min=3,max=50"`
+  Content    string    `json:"content" binding:"required,min=5,max=5000"`
+  UserID     int       `json:"userId" binding:"required"`
+}
+type PostEntity struct {
+	Entity
+	Post
 }

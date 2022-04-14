@@ -10,7 +10,7 @@ import (
 )
 
 func CreatePost(ctx *gin.Context) {
-	post := new(models.Post)
+	post := new(models.PostEntity)
 	if err := ctx.Bind(post); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
@@ -22,7 +22,8 @@ func CreatePost(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if err := services.AddPost(user, post); err != nil {
+    userId := user.ID
+	if err := services.AddPost(userId, post); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -112,20 +113,20 @@ func DeletePost(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Not valid ID."})
 		return
 	}
-	user, err := middlewares.CurrentUser(ctx)
+	_,err := middlewares.CurrentUser(ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	post, err := services.GetPostByID(id)
+	_,err := services.GetPostByID(id)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if user.ID != post.UserID {
-		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Not authorized."})
-		return
-	}
+	// if user.ID != post.UserID {
+	// 	ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Not authorized."})
+	// 	return
+	// }
 	if err := services.DeletePost(id); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

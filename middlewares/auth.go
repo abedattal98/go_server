@@ -40,14 +40,14 @@ func Authorization(ctx *gin.Context) {
   ctx.Next()
 }
 
-func CurrentUser(ctx *gin.Context) (*models.User, error) {
+func CurrentUser(ctx *gin.Context) (*models.UserEntity, error) {
 	var err error
 	_user, exists := ctx.Get("user")
 	if !exists {
 		err = errors.New("Current context user not set")
 		return nil, err
 	}
-	user, ok := _user.(*models.User)
+	user, ok := _user.(*models.UserEntity)
 	if !ok {
 		err = errors.New("Context user is not valid type")
 		return nil, err

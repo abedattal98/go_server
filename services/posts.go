@@ -2,26 +2,28 @@ package services
 
 import (
 	"errors"
+	"math/rand"
 	"rgb/models"
 	"rgb/store"
-	"math/rand"
 )
 
-func AddPost(user *models.User, post *models.Post) error {
+func AddPost(userId int, post *models.PostEntity) error {
 	var err error
-	post.UserID = user.ID
-	post.ID = rand.Intn(100);
+	post.UserID = userId
+	post.ID = rand.Intn(100)
 
-	store.Posts = append(store.Posts, post)
+	if post.UserID != 0 {
+		store.Posts = append(store.Posts, post)
 		return nil
+	}
 
 	return err
 }
 
-func UpdatePost(postID int, post *models.Post) (error) {
+func UpdatePost(postID int, post *models.PostEntity) error {
 	var err error
 	for i, p := range store.Posts {
-		if p.ID == postID  {
+		if p.ID == postID {
 			store.Posts[i] = post
 			return nil
 		}
@@ -30,10 +32,10 @@ func UpdatePost(postID int, post *models.Post) (error) {
 	return err
 }
 
-func GetPostByID(id int) (*models.Post, error) {
+func GetPostByID(id int) (*models.PostEntity, error) {
 	var err error
 	for _, p := range store.Posts {
-		if p.ID == id  {
+		if p.ID == id {
 			return p, nil
 		}
 	}
@@ -41,8 +43,8 @@ func GetPostByID(id int) (*models.Post, error) {
 	return nil, err
 }
 
-func GetPostsByUserID(user *models.User) []*models.Post {
-	var posts []*models.Post
+func GetPostsByUserID(user *models.UserEntity) []*models.PostEntity {
+	var posts []*models.PostEntity
 	for _, p := range store.Posts {
 		if p.UserID == user.ID {
 			posts = append(posts, p)

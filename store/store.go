@@ -5,12 +5,12 @@ import (
 	"rgb/models"
 )
 
-var Users []*models.User
-var Posts []*models.Post
+var Users []*models.UserEntity
+var Posts []*models.PostEntity
 
-func FetchUser(id int) (*models.User, error) {
+func FetchUser(id int) (*models.UserEntity, error) {
 	var err error
-	user := new(models.User)
+	user := new(models.UserEntity)
 	user.ID = id
 	for _, u := range Users {
 		if u.ID == user.ID {

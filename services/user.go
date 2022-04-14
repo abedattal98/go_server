@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func AddUser(user *models.User) (*models.User,error) {
+func AddUser(user *models.User) (*models.UserEntity,error) {
 	var err error
 
 	for _, u := range store.Users {
@@ -16,17 +16,21 @@ func AddUser(user *models.User) (*models.User,error) {
 			return nil,err
 		}
 	}
-	user.ID  = int(time.Now().Unix());
-	store.Users = append(store.Users, user)
-		return user,nil
+	userEntity := &models.UserEntity{
+		Entity: models.Entity{
+			ID:        int(time.Now().Unix()),
+			CreatedAt: time.Date(2020, time.July, 30, 0, 0, 0, 0, time.UTC),
+		},
+		User: *user,
+	}
+	store.Users = append(store.Users, userEntity)
+		return userEntity,nil
 }
 
-func Authenticate(username, password string) (*models.User, error) {
+func Authenticate(username, password string) (*models.UserEntity, error) {
 	var err error;
-
-	user := new(models.User)
 	for _, u := range store.Users {
-		if (u.Username == user.Username && u.Password == user.Password ){
+		if (u.Username == username && u.Password == password ){
 			return u, nil
 		}
 	}
