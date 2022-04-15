@@ -7,9 +7,9 @@ import (
 	"math/rand"
 )
 
-func AddPost(user *models.User, post *models.Post) error {
+func AddPost(userId int, post *models.Post) error {
 	var err error
-	post.UserID = user.ID
+	post.UserID = userId
 	post.ID = rand.Intn(100);
 
 	store.Posts = append(store.Posts, post)
@@ -41,10 +41,10 @@ func GetPostByID(id int) (*models.Post, error) {
 	return nil, err
 }
 
-func GetPostsByUserID(user *models.User) []*models.Post {
+func GetPostsByUserID(userId int) []*models.Post {
 	var posts []*models.Post
 	for _, p := range store.Posts {
-		if p.UserID == user.ID {
+		if p.UserID == userId {
 			posts = append(posts, p)
 		}
 	}
