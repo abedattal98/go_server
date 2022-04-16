@@ -16,7 +16,7 @@ func initUserAPI() controllers.UserAPI {
 	userRepository := repositories.ProvideUserRepository()
 	studentService := services.ProvideUserService(userRepository)
 	userAPI := controllers.ProvideUserAPI(studentService)
-	return userAPI
+	return *userAPI
 }
 func setRouter() *gin.Engine {
 	// Creates default gin router with Logger and Recovery middleware already attached

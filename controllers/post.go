@@ -16,6 +16,7 @@ func CreatePost(ctx *gin.Context) {
 		return
 	}
 	post := new(models.Post)
+	post.UserID = userId;
 	if err := ctx.Bind(post); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return

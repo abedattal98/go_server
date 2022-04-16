@@ -1,12 +1,14 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"rgb/models"
+	interfaceUser "rgb/repositories/interface"
 	"rgb/services"
 	"rgb/services/jwt"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func SignUp(ctx *gin.Context) {
@@ -15,7 +17,7 @@ func SignUp(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
 	}
-	if _,err := services.AddUser(user); err != nil {
+	if _, err := services.AddUser(user); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -45,23 +47,32 @@ func SignIn(ctx *gin.Context) {
 }
 
 type UserAPI struct {
-	UserService services.UserService
+	UserService interfaceUser.IUserService
 }
 
-func ProvideUserAPI(p services.UserService) UserAPI {
-	return UserAPI{UserService: p}
+func ProvideUserAPI(usecase interfaceUser.IUserService) *UserAPI {
+	return &UserAPI{
+		UserService: usecase,
+	}
 }
 
 func (p *UserAPI) FindAll(c *gin.Context) {
-	users := p.UserService.FindAll()
+	users, error := p.UserService.FindAll()
+	if error != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": error.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"users": models.ToUsersDTOs(users)})
 }
 
 func (p *UserAPI) FindByID(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	user := p.UserService.FindByID(int(id))
-
+	user, err := p.UserService.FindByID(int(id))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"user": models.ToUserDTO(user)})
 }
 
@@ -73,7 +84,11 @@ func (p *UserAPI) Create(c *gin.Context) {
 		return
 	}
 
-	createdStudent := p.UserService.Save(models.ToUser2(createStudentDTO))
+	createdStudent, err := p.UserService.Save(models.ToUser2(createStudentDTO))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"student created successufuly": models.ToUserDTO(createdStudent)})
 }
 
@@ -85,21 +100,30 @@ func (p *UserAPI) Update(c *gin.Context) {
 		return
 	}
 	id, _ := strconv.Atoi(c.Param("id"))
-	user := p.UserService.FindByID(int(id))
-	if user == (models.User{}) {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	user, err := p.UserService.FindByID(int(id))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
 	user.Username = userDTO.Username
 	user.Email = userDTO.Email
-	updateStudent := p.UserService.Save(user)
-
+	updateStudent, err := p.UserService.Save(user)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"msg": "Post updated successfully.",
-		"data":models.ToUserDTO(updateStudent)})
+		"data": models.ToUserDTO(updateStudent)})
 }
 
 func (p *UserAPI) Delete(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	user := p.UserService.FindByID(int(id))
+	user, err := p.UserService.FindByID(int(id))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	if user == (models.User{}) {
 		c.Status(http.StatusBadRequest)
 		return
