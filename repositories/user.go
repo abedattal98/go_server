@@ -1,8 +1,8 @@
 package repositories
 
 import (
+	"rgb/domain"
 	"rgb/models"
-	services "rgb/repositories/interface"
 )
 
 var UserStore []models.User
@@ -10,7 +10,7 @@ var UserStore []models.User
 type UserRepository struct {
 }
 
-func ProvideUserRepository() services.IUserService {
+func ProvideUserRepository() domain.IUserRepository {
 	return &UserRepository{}
 }
 

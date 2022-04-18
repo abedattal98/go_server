@@ -108,6 +108,8 @@ func (p *UserAPI) Update(c *gin.Context) {
 
 	user.Username = userDTO.Username
 	user.Email = userDTO.Email
+	user.ModifiedAt = userDTO.ModifiedAt
+
 	updateStudent, err := p.UserService.Save(user)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
