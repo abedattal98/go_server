@@ -26,6 +26,9 @@ func CreatePost(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
 	}
+	post.CreatedAt = time.Now().UTC()
+	post.ModifiedAt = time.Now().UTC()
+
 	//send the post data to the save services
 	if err := services.AddPost(userId, post); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -65,14 +68,14 @@ func UpdatePost(ctx *gin.Context) {
 
 //get posts by user ID
 func GetPostsByUserID(ctx *gin.Context) {
-	//get user id 
+	//get user id
 	userParamId := ctx.Param("id")
 	userId, err := strconv.Atoi(userParamId)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Not valid ID."})
 		return
 	}
-	//check all posts to the related user id 
+	//check all posts to the related user id
 	posts := services.GetPostsByUserID(userId)
 
 	ctx.JSON(http.StatusOK, gin.H{
@@ -107,7 +110,7 @@ func DeletePost(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Not valid ID."})
 		return
 	}
-		//check if post exists
+	//check if post exists
 
 	post, err := services.GetPostByID(id)
 	if err != nil {

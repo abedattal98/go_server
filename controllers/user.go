@@ -6,7 +6,7 @@ import (
 	interfaceUser "rgb/repositories/interface"
 	"rgb/services/jwt"
 	"strconv"
-
+	"time"
 	"github.com/gin-gonic/gin"
 )
 
@@ -47,7 +47,9 @@ func (p *UserAPI) Create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	createStudentDTO.CreatedAt = time.Now().UTC()
+	createStudentDTO.ModifiedAt = time.Now().UTC()
+	
 	createdStudent, err := p.UserService.Save(models.ToUser2(createStudentDTO))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -72,7 +74,7 @@ func (p *UserAPI) Update(c *gin.Context) {
 
 	user.Username = userDTO.Username
 	user.Email = userDTO.Email
-	user.ModifiedAt = userDTO.ModifiedAt
+	user.ModifiedAt = time.Now().UTC()
 
 	updateStudent, err := p.UserService.Save(user)
 	if err != nil {
@@ -107,8 +109,10 @@ func (p *UserAPI) SignUp(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	createStudentDTO.CreatedAt = time.Now().UTC()
+	createStudentDTO.ModifiedAt = time.Now().UTC()
+	
 	//send values to the service
-
 	createdStudent, err := p.UserService.Save(models.ToUser2(createStudentDTO))
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
