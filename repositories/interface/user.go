@@ -10,4 +10,5 @@ type IUserService interface {
 	FindByID( id int) (models.User, error)
 	Save(user models.User) (models.User, error)
 	Delete( user models.User) error
+	Authenticate(email, password string) (models.User, error)
 }

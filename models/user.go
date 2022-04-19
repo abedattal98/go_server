@@ -22,7 +22,7 @@ type CreateUserDTO struct {
 	ID         int    `json:"id,string,omitempty"`
 	Username   string `json:"username" binding:"required,min=5,max=30"`
 	Password   string `json:"password" binding:"required,min=7,max=32"`
-	Email      string `json:"email"`
+	Email      string `json:"email" binding:"required,min=7,max=32"`
 	CreatedAt  time.Time
 	ModifiedAt time.Time
 }
@@ -33,6 +33,14 @@ type UpdateUserDTO struct {
 	Email      string `json:"email"`
 	ModifiedAt time.Time
 }
+type LoginDTO struct {
+	Password string `json:"password" binding:"required,min=7,max=32"`
+	Email    string `json:"email"`
+}
+
+func ToLoginUser(userDTO LoginDTO) User {
+	return User{Password: userDTO.Password, Email: userDTO.Email}
+}
 
 func ToUser(userDTO UserDTO) User {
 	return User{Username: userDTO.Username, Email: userDTO.Email, CreatedAt: userDTO.CreatedAt, ModifiedAt: userDTO.ModifiedAt}
@@ -40,7 +48,7 @@ func ToUser(userDTO UserDTO) User {
 
 func ToUser2(userDTO CreateUserDTO) User {
 	id := int(time.Now().Unix())
-	return User{ID: id, Username: userDTO.Username, Email: userDTO.Email, CreatedAt: userDTO.CreatedAt, ModifiedAt: userDTO.ModifiedAt}
+	return User{ID: id, Username: userDTO.Username, Email: userDTO.Email, CreatedAt: userDTO.CreatedAt, ModifiedAt: userDTO.ModifiedAt, Password: userDTO.Password}
 }
 
 func ToUserDTO(user User) UserDTO {

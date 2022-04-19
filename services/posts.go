@@ -8,14 +8,11 @@ import (
 )
 
 func AddPost(userId int, post *models.Post) error {
-	var err error
 	post.UserID = userId
 	post.ID = rand.Intn(100);
 
 	store.Posts = append(store.Posts, post)
 		return nil
-
-	return err
 }
 
 func UpdatePost(postID int, post *models.Post) (error) {

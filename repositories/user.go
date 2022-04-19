@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"rgb/domain"
 	"rgb/models"
 )
@@ -31,6 +32,12 @@ func (p *UserRepository) FindByID(id int) (models.User, error) {
 }
 
 func (p *UserRepository) Save(user models.User) (models.User, error) {
+	for _, u := range UserStore {
+		if u.Email == user.Email {
+			err := errors.New("Username already exists")
+			return models.User{}, err
+		}
+	}
 	UserStore = append(UserStore, user)
 	return user, nil
 }
@@ -42,4 +49,16 @@ func (p *UserRepository) Delete(user models.User) error {
 		}
 	}
 	return nil
+}
+
+func (p *UserRepository) Authenticate(email, password string) (models.User, error) {
+	var user models.User
+
+	for _, u := range UserStore {
+		if u.Email == email && u.Password == password {
+			return u, nil
+		}
+	}
+	err := errors.New("User don't exists")
+	return user, err
 }

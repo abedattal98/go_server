@@ -1,12 +1,9 @@
 package services
 
 import (
-	"errors"
 	"rgb/domain"
 	"rgb/models"
 	services "rgb/repositories/interface"
-	"rgb/store"
-	"time"
 )
 
 type UserService struct {
@@ -38,29 +35,15 @@ func (p *UserService) Delete(user models.User) error {
 	error := p.userRepo.Delete(user)
 	return error
 }
-
-func AddUser(user *models.User) (*models.User, error) {
+func (p *UserService) AddUser(user models.User) (models.User, error) {
 	var err error
-
-	for _, u := range store.Users {
-		if u.Username == user.Username {
-			err = errors.New("User already exists")
-			return nil, err
-		}
-	}
-	user.ID = int(time.Now().Unix())
-	store.Users = append(store.Users, user)
-	return user, nil
+	users, err := p.userRepo.Save(user)
+	return users, err
 }
 
-func Authenticate(username, password string) (*models.User, error) {
-	var err error
-
-	for _, u := range store.Users {
-		if u.Username == username && u.Password == password {
-			return u, nil
-		}
-	}
-	err = errors.New("User don't exists")
-	return nil, err
+func (p *UserService) Authenticate(email, password string) (models.User, error) {
+	users, err := p.userRepo.Authenticate(email, password)
+	return users, err
 }
+
+

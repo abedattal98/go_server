@@ -1,31 +1,31 @@
 package jwt
 
-import (
-	"github.com/gin-gonic/gin"
-	"log"
-	"rgb/models"
-	"rgb/services"
-	"rgb/store"
-)
+// import (
+// 	"github.com/gin-gonic/gin"
+// 	"log"
+// 	"rgb/models"
+// 	"rgb/services"
+// 	"rgb/store"
+// )
 
-func testSetup() *gin.Engine {
-	gin.SetMode(gin.TestMode)
-	store.Users = nil
-	JwtSetup("secret")
-	return gin.Default()
-}
+// func testSetup() *gin.Engine {
+// 	gin.SetMode(gin.TestMode)
+// 	store.Users = nil
+// 	JwtSetup("secret")
+// 	return gin.Default()
+// }
 
-func addTestUser() *models.User {
-	user := &models.User{
-		Username: "batman",
-		Password: "secret123",
-	}
-	user, err := services.AddUser(user)
-	if err != nil {
-		log.Println("Error adding test user", err)
-	}
-	return user
-}
+// func addTestUser() *models.User {
+// 	// user := &models.User{
+// 	// 	Username: "batman",
+// 	// 	Password: "secret123",
+// 	// }
+// 	// user, err := services.AddUser(user)
+// 	// if err != nil {
+// 	// 	log.Println("Error adding test user", err)
+// 	// }
+// 	// return user
+// }
 
 
 	// "bytes"

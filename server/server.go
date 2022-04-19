@@ -30,8 +30,8 @@ func setRouter() *gin.Engine {
 	// Create API route group
 	api := router.Group("/api")
 	{
-		api.POST("/signup", controllers.SignUp)
-		api.POST("/signin", controllers.SignIn)
+		api.POST("/signup", userAPI.SignUp)
+		api.POST("/signin", userAPI.SignIn)
 
 		api.GET("/users", userAPI.FindAll)
 		api.GET("/users/:id", userAPI.FindByID)
@@ -42,17 +42,15 @@ func setRouter() *gin.Engine {
 		api.GET("/hello", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"msg": "world"})
 		})
+
+		api.GET("/users/:id/posts", controllers.GetPostsByUserID)
+		api.POST("/users/:id/posts", controllers.CreatePost)
+		api.GET("/posts/:id", controllers.GetPostById)
+		api.DELETE("/posts/:id", controllers.DeletePost)
+		api.PUT("/posts/:id", controllers.UpdatePost)
 	}
 	authorized := api.Group("/")
 	authorized.Use(middlewares.Authorization)
-	{
-		authorized.GET("/users/:id/posts", controllers.GetPostsByUserID)
-		authorized.POST("/users/:id/posts", controllers.CreatePost)
-		authorized.GET("/posts/:id", controllers.GetPostById)
-		authorized.DELETE("/posts/:id", controllers.DeletePost)
-		authorized.PUT("/posts/:id", controllers.UpdatePost)
-
-	}
 
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
 

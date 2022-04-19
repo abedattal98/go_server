@@ -30,7 +30,7 @@ func JwtSetup(JwtSecret string) {
 	}
 }
 
-func GenerateJWT(user *models.User,) string {
+func GenerateJWT(user models.User,) string {
 	claims := &jwt.RegisteredClaims{
 	  ID:        fmt.Sprint(user.ID),
 	  ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 7)),

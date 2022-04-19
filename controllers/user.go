@@ -4,47 +4,11 @@ import (
 	"net/http"
 	"rgb/models"
 	interfaceUser "rgb/repositories/interface"
-	"rgb/services"
 	"rgb/services/jwt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-func SignUp(ctx *gin.Context) {
-	user := new(models.User)
-	if err := ctx.Bind(user); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
-		return
-	}
-	if _, err := services.AddUser(user); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "Signed up successfully.",
-		"jwt": jwt.GenerateJWT(user),
-	})
-}
-
-func SignIn(ctx *gin.Context) {
-	user := new(models.User)
-	if err := ctx.Bind(user); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"err": err.Error()})
-		return
-	}
-	user, err := services.Authenticate(user.Username, user.Password)
-
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Sign in failed."})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "Signed in successfully.",
-		"jwt": jwt.GenerateJWT(user),
-	})
-}
 
 type UserAPI struct {
 	UserService interfaceUser.IUserService
@@ -133,4 +97,49 @@ func (p *UserAPI) Delete(c *gin.Context) {
 
 	p.UserService.Delete(user)
 	c.JSON(http.StatusOK, gin.H{"msg": "User deleted successfully."})
+}
+
+func (p *UserAPI) SignUp(ctx *gin.Context) {
+	var createStudentDTO models.CreateUserDTO
+	//assign values from body to the createStudentDTO
+	err := ctx.BindJSON(&createStudentDTO)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	//send values to the service
+
+	createdStudent, err := p.UserService.Save(models.ToUser2(createStudentDTO))
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	//return the created student jwt
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg": "Signed up successfully.",
+		"jwt": jwt.GenerateJWT(createdStudent),
+	})
+}
+
+func (p *UserAPI) SignIn(ctx *gin.Context) {
+	var LoginDTO models.LoginDTO
+	//assign values from body to the LoginDTO
+	err := ctx.BindJSON(&LoginDTO)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	loginUser, err := p.UserService.Authenticate(LoginDTO.Email, LoginDTO.Password)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Sign in failed."})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg":  "Signed in successfully.",
+		"jwt":  jwt.GenerateJWT(loginUser),
+		"user": loginUser,
+	})
 }
