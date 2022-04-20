@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"rgb/controllers"
 
-	// "rgb/middlewares"
+	"rgb/middlewares"
 	"rgb/repositories"
 	"rgb/services"
 	"rgb/services/jwt"
@@ -13,8 +13,9 @@ import (
 	// "rgb/conf"
 )
 
+var UserRepository = repositories.ProvideUserRepository()
+
 func initUserAPI() controllers.UserAPI {
-	UserRepository := repositories.ProvideUserRepository()
 	studentService := services.ProvideUserService(UserRepository)
 	userAPI := controllers.ProvideUserAPI(studentService)
 	return *userAPI
@@ -40,9 +41,7 @@ func setRouter() *gin.Engine {
 		api.PUT("/users/:id", userAPI.Update)
 		api.DELETE("/users/:id", userAPI.Delete)
 
-		api.GET("/hello", func(ctx *gin.Context) {
-			ctx.JSON(200, gin.H{"msg": "world"})
-		})
+
 
 		api.GET("/users/:id/posts", controllers.GetPostsByUserID)
 		api.POST("/users/:id/posts", controllers.CreatePost)
@@ -50,12 +49,12 @@ func setRouter() *gin.Engine {
 		api.DELETE("/posts/:id", controllers.DeletePost)
 		api.PUT("/posts/:id", controllers.UpdatePost)
 	}
-	// authorized := api.Group("/")
-
-	// UserRepository := repositories.ProvideUserRepository()
-	// authMiddleware := middlewares.AuthMiddleware{UserRepository}
-	// authorized.Use(authMiddleware.Authorization)
-
+	authorized := api.Group("/")
+	authMiddleware := middlewares.AuthMiddleware{Repo:UserRepository}
+	authorized.Use(authMiddleware.Authorization)
+	authorized.GET("/hello", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{"msg": "world"})
+	})
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
 
 	return router
