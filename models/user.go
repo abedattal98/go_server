@@ -34,7 +34,7 @@ type UpdateUserDTO struct {
 	ModifiedAt time.Time
 }
 type LoginDTO struct {
-	Password string `json:"password" binding:"required,min=7,max=32"`
+	Password string `json:"password"`
 	Email    string `json:"email"`
 }
 

@@ -3,7 +3,8 @@ package server
 import (
 	"net/http"
 	"rgb/controllers"
-	"rgb/middlewares"
+
+	// "rgb/middlewares"
 	"rgb/repositories"
 	"rgb/services"
 	"rgb/services/jwt"
@@ -49,11 +50,11 @@ func setRouter() *gin.Engine {
 		api.DELETE("/posts/:id", controllers.DeletePost)
 		api.PUT("/posts/:id", controllers.UpdatePost)
 	}
-	authorized := api.Group("/")
+	// authorized := api.Group("/")
 
-	UserRepository := repositories.ProvideUserRepository()
-	authMiddleware := middlewares.AuthMiddleware{UserRepository}
-	authorized.Use(authMiddleware.Authorization)
+	// UserRepository := repositories.ProvideUserRepository()
+	// authMiddleware := middlewares.AuthMiddleware{UserRepository}
+	// authorized.Use(authMiddleware.Authorization)
 
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
 
