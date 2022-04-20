@@ -7,6 +7,7 @@ import (
 	"rgb/services/jwt"
 	"strconv"
 	"time"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -49,13 +50,13 @@ func (p *UserAPI) Create(c *gin.Context) {
 	}
 	createStudentDTO.CreatedAt = time.Now().UTC()
 	createStudentDTO.ModifiedAt = time.Now().UTC()
-	
+
 	createdStudent, err := p.UserService.Save(models.ToUser2(createStudentDTO))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"student created successufuly": models.ToUserDTO(createdStudent)})
+	c.JSON(http.StatusOK, gin.H{"user created successufuly": models.ToUserDTO(createdStudent)})
 }
 
 func (p *UserAPI) Update(c *gin.Context) {
@@ -81,7 +82,7 @@ func (p *UserAPI) Update(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"msg": "Post updated successfully.",
+	c.JSON(http.StatusOK, gin.H{"msg": "user updated successfully.",
 		"data": models.ToUserDTO(updateStudent)})
 }
 
@@ -98,7 +99,7 @@ func (p *UserAPI) Delete(c *gin.Context) {
 	}
 
 	p.UserService.Delete(user)
-	c.JSON(http.StatusOK, gin.H{"msg": "User deleted successfully."})
+	c.JSON(http.StatusOK, gin.H{"msg": "user deleted successfully."})
 }
 
 func (p *UserAPI) SignUp(ctx *gin.Context) {
@@ -111,17 +112,17 @@ func (p *UserAPI) SignUp(ctx *gin.Context) {
 	}
 	createStudentDTO.CreatedAt = time.Now().UTC()
 	createStudentDTO.ModifiedAt = time.Now().UTC()
-	
+
 	//send values to the service
-	createdStudent, err := p.UserService.Save(models.ToUser2(createStudentDTO))
+	createdUser, err := p.UserService.Save(models.ToUser2(createStudentDTO))
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	//return the created student jwt
+	//return the created user jwt
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "Signed up successfully.",
-		"jwt": jwt.GenerateJWT(createdStudent),
+		"jwt": jwt.GenerateJWT(createdUser),
 	})
 }
 
@@ -140,7 +141,7 @@ func (p *UserAPI) SignIn(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Sign in failed."})
 		return
 	}
-
+	//return the created user jwt
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg":  "Signed in successfully.",
 		"jwt":  jwt.GenerateJWT(loginUser),

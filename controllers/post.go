@@ -30,13 +30,14 @@ func CreatePost(ctx *gin.Context) {
 	post.ModifiedAt = time.Now().UTC()
 
 	//send the post data to the save services
-	if err := services.AddPost(userId, post); err != nil {
+	createdPost,err := services.AddPost(userId, *post);
+	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg":  "Post created successfully.",
-		"data": post,
+		"data": createdPost,
 	})
 }
 
@@ -58,12 +59,13 @@ func UpdatePost(ctx *gin.Context) {
 	post.Content = updatePostDTO.Content
 	post.ModifiedAt = time.Now().UTC()
 
-	if err := services.UpdatePost(id, post); err != nil {
+	updatedPost,err := services.UpdatePost(id, post); 
+	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"msg": "Post updated successfully.",
-		"data": models.ToPostDTO(*post)})
+		"data": models.ToPostDTO(updatedPost)})
 }
 
 //get posts by user ID

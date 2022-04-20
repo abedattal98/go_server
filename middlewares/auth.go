@@ -1,43 +1,47 @@
 package middlewares
 
 import (
-  "net/http"
-  "rgb/store"
-  // "rgb/services"
-  "rgb/services/jwt"
-  "rgb/models"
-  "errors"
-  "strings"
-  "github.com/gin-gonic/gin"
+	"errors"
+	"net/http"
+	"rgb/domain"
+	"rgb/models"
+	"rgb/services/jwt"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
-func Authorization(ctx *gin.Context) {
-  authHeader := ctx.GetHeader("Authorization")
-  if authHeader == "" {
-    ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing."})
-    return
-  }
-  headerParts := strings.Split(authHeader, " ")
-  if len(headerParts) != 2 {
-    ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header format is not valid."})
-    return
-  }
-  if headerParts[0] != "Bearer" {
-    ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing bearer part."})
-    return
-  }
-  userID, err := jwt.VerifyJWT(headerParts[1])
-  if err != nil {
-    ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-    return
-  }
-  user, err := store.FetchUser(userID)
-  if err != nil {
-    ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-    return
-  }
-  ctx.Set("user", user)
-  ctx.Next()
+type AuthMiddleware struct {
+	Repo domain.IUserRepository
+}
+
+func (p *AuthMiddleware) Authorization(ctx *gin.Context) {
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing."})
+		return
+	}
+	headerParts := strings.Split(authHeader, " ")
+	if len(headerParts) != 2 {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header format is not valid."})
+		return
+	}
+	if headerParts[0] != "Bearer" {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing bearer part."})
+		return
+	}
+	userID, err := jwt.VerifyJWT(headerParts[1])
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	user, err := p.Repo.FetchUser(userID)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.Set("user", user)
+	ctx.Next()
 }
 
 func CurrentUser(ctx *gin.Context) (*models.User, error) {

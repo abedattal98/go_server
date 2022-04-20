@@ -13,8 +13,8 @@ import (
 )
 
 func initUserAPI() controllers.UserAPI {
-	userRepository := repositories.ProvideUserRepository()
-	studentService := services.ProvideUserService(userRepository)
+	UserRepository := repositories.ProvideUserRepository()
+	studentService := services.ProvideUserService(UserRepository)
 	userAPI := controllers.ProvideUserAPI(studentService)
 	return *userAPI
 }
@@ -50,7 +50,10 @@ func setRouter() *gin.Engine {
 		api.PUT("/posts/:id", controllers.UpdatePost)
 	}
 	authorized := api.Group("/")
-	authorized.Use(middlewares.Authorization)
+
+	UserRepository := repositories.ProvideUserRepository()
+	authMiddleware := middlewares.AuthMiddleware{UserRepository}
+	authorized.Use(authMiddleware.Authorization)
 
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
 

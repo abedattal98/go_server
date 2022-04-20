@@ -1,22 +1,24 @@
 package store
 
 import (
-	"errors"
 	"rgb/models"
+	"time"
 )
 
-var Users []*models.User
-var Posts []*models.Post
-
-func FetchUser(id int) (*models.User, error) {
-	var err error
-	user := new(models.User)
-	user.ID = id
-	for _, u := range Users {
-		if u.ID == user.ID {
-			return u, nil
-		}
-	}
-	err = errors.New("User don't exists")
-	return nil, err
+var Posts = []models.Post {
+	models.Post{
+		ID:         1,
+		Title:      "Gotham cronicles",
+		Content:    "Joker is planning a big hit tonight.",
+		CreatedAt:  time.Time{},
+		ModifiedAt: time.Time{},
+		UserID:     1,
+	},
+	models.Post{
+		ID: 2,
+		Title: "Justice league meeting",
+		Content: "Darkseid is plotting again.",
+		UserID: 1,
+	},
 }
+
