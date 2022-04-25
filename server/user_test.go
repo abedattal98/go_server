@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"rgb/controllers"
 	"rgb/repositories"
 	"rgb/services/jwt"
 	"strings"
 	"testing"
-
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,6 +20,15 @@ func performRequest(r http.Handler, method, path string, body io.Reader) *httpte
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	return w
+}
+
+func serverTest()  (*gin.Engine,*gin.RouterGroup,controllers.UserAPI) { 
+	router := gin.Default()
+	var UserRepository = repositories.ProvideUserRepository()
+	userAPI := initUserAPI(UserRepository)
+	// Create API route group
+	api := router.Group("/api")
+	return router,api,userAPI
 }
 
 func TestPing(t *testing.T) {
@@ -47,8 +56,9 @@ func TestPing(t *testing.T) {
 	assert.Equal(t, body["msg"], value)
 }
 func TestUserRoute(t *testing.T) {
-	var UserRepository = repositories.ProvideUserRepository()
-	router := setRouter(UserRepository) // Perform a GET request with that handler.
+	router,api,userAPI := serverTest()
+	api.GET("/users", userAPI.FindAll)
+
 	w := performRequest(router, "GET", "/api/users", nil)
 
 	// Assert we encoded correctly,
@@ -61,7 +71,6 @@ func TestUserRoute(t *testing.T) {
 	assert.Equal(t, expected, w.Body.String())
 	new, _ := UnmarshalDataResponse([]byte(w.Body.String()))
 	assert.Equal(t, expectedResponse.Users, new.Users)
-
 }
 
 func getRegistrationPOSTPayload() string {
@@ -75,10 +84,10 @@ func TestRegisterUnauthenticated(t *testing.T) {
 	//set up the payload
 	registrationPayload := `{"email":"Hellloo22worldd","password": "Hello12w3","username":"21312"}`
 	//set up the server
-	var UserRepository = repositories.ProvideUserRepository()
-	jwt.JwtSetup("test")
-	router := setRouter(UserRepository)
+	router,api,userAPI := serverTest()
+	api.POST("/signup", userAPI.SignUp)
 
+	jwt.JwtSetup("test")
 	// Perform a POST request with that handler.
 	w := performRequest(router, "POST", "/api/signup", strings.NewReader(registrationPayload))
 
@@ -97,10 +106,10 @@ func TestAddUser(t *testing.T) {
 	//set up the payload
 	registrationPayload := `{"email":"Hellloo22worldd","password": "Hello12w3","username":"21312"}`
 	//set up the server
-	var UserRepository = repositories.ProvideUserRepository()
-	jwt.JwtSetup("test")
-	router := setRouter(UserRepository)
+	router,api,userAPI := serverTest()
+	api.POST("/users", userAPI.SignUp)
 
+	jwt.JwtSetup("test")
 	// Perform a POST request with that handler.
 	w := performRequest(router, "POST", "/api/users", strings.NewReader(registrationPayload))
 	//Check response code is 200
@@ -111,7 +120,7 @@ func TestAddUser(t *testing.T) {
 	json.Unmarshal([]byte(w.Body.String()), &response)
 	// Grab the value & whether or not it exists
 	value, exists := response["msg"]
-	assert.Equal(t, value, "user created successfully")
+	assert.Equal(t, value, "Signed up successfully.")
 	assert.True(t, exists)
 }
 
