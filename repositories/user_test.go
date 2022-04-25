@@ -20,7 +20,6 @@ func TestAddUser(t *testing.T) {
 }
 func TestAddUserWithExistingUsername(t *testing.T) {
 	repo := ProvideUserRepository()
-
 	createUser, err := AddTestUser(repo)
 	assert.NoError(t, err)
 	assert.Greater(t, createUser.ID, 0)
@@ -40,7 +39,6 @@ func TestAuthenticateUserInvalidPassword(t *testing.T) {
 	repo := ProvideUserRepository()
 	user, err := AddTestUser(repo)
 	assert.NoError(t, err)
-
 	authUser, err := repo.Authenticate(user.Username, "invalid")
 	assert.Error(t, err)
 	assert.Empty(t, authUser)

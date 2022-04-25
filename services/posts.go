@@ -2,25 +2,25 @@ package services
 
 import (
 	"errors"
+	"math/rand"
 	"rgb/models"
 	"rgb/store"
-	"math/rand"
 )
 
-func AddPost(userId int, post models.Post) (models.Post,error) {
+func AddPost(userId int, post models.Post) (models.Post, error) {
 	post.UserID = userId
-	post.ID = rand.Intn(100);
+	post.ID = rand.Intn(100)
 
 	store.Posts = append(store.Posts, post)
-		return post,nil
+	return post, nil
 }
 
-func UpdatePost(postID int, post models.Post) (models.Post,error) {
+func UpdatePost(postID int, post models.Post) (models.Post, error) {
 	var err error
 	for i, p := range store.Posts {
-		if p.ID == postID  {
+		if p.ID == postID {
 			store.Posts[i] = post
-			return post,nil
+			return post, nil
 		}
 	}
 	err = errors.New("Post don't exists")
@@ -30,7 +30,7 @@ func UpdatePost(postID int, post models.Post) (models.Post,error) {
 func GetPostByID(id int) (models.Post, error) {
 	var err error
 	for _, p := range store.Posts {
-		if p.ID == id  {
+		if p.ID == id {
 			return p, nil
 		}
 	}

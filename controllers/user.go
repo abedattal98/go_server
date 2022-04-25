@@ -56,7 +56,7 @@ func (p *UserAPI) Create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"user created successufuly": models.ToUserDTO(createdStudent)})
+	c.JSON(http.StatusOK, gin.H{"msg":"user created successfully", "user": models.ToUserDTO(createdStudent)})
 }
 
 func (p *UserAPI) Update(c *gin.Context) {
