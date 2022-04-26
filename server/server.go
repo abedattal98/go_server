@@ -1,7 +1,7 @@
 package server
 
 import (
-	"rgb/controllers"
+	"rgb/api"
 	"rgb/repositories"
 	"rgb/services"
 	"rgb/services/jwt"
@@ -19,7 +19,7 @@ func Start() {
 		Repos: &repos,
 	})
 
-	handlers := controllers.NewHandler(services)
+	handlers := api.NewHandler(services)
 
 	srv := handlers.Init()
 

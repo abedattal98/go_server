@@ -1,9 +1,11 @@
-package controllers
+// Controllers to get all routes from the API
+
+package api
 
 import (
 	"net/http"
 
-	"rgb/controllers/api"
+	"rgb/api/controllers"
 	"rgb/services"
 
 	"github.com/gin-gonic/gin"
@@ -28,18 +30,18 @@ func (h *Handler) Init() *gin.Engine {
 		gin.Logger(),
 	)
 
-	// Init router
+	// test router
 	router.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
-
+	// Init router from handlers routers
 	h.initAPI(router)
 
 	return router
 }
 
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := api.NewHandler(h.services)
+	handlerV1 := controllers.NewHandler(h.services)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)
