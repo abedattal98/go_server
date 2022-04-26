@@ -20,8 +20,8 @@ func (p *userService) FindAll() ([]models.User, error) {
 	return p.userRepo.FindAll()
 }
 
-func (p *userService) FindByID(id int) (models.User, error) {
-	users, err := p.userRepo.FindByID(id)
+func (p *userService) FindById(id int) (models.User, error) {
+	users, err := p.userRepo.FindById(id)
 	return users, err
 }
 

@@ -2,6 +2,7 @@ package server
 
 import (
 	"rgb/api"
+	"rgb/models"
 	"rgb/repositories"
 	"rgb/services"
 	"rgb/services/jwt"
@@ -18,6 +19,9 @@ func Start() {
 	//initialize  repository
 	repos := repositories.NewRepositories(*repo)
 
+	//Populate default users
+	PopulateUsers(repos)
+
 	//initialize  services
 	services := services.NewServices(services.Deps{
 		Repos: &repos,
@@ -29,4 +33,15 @@ func Start() {
 	srv := handlers.Init()
 
 	srv.Run()
+}
+
+// PopulateUsers populates the Users variable with User
+func PopulateUsers(repo repositories.Repositories) {
+	defaultUser := models.User{
+        ID:       1,
+        Email:    "admin@admin.com",
+        Password: "admin",
+		Username: "admin",
+    }
+	repo.Users.Save(defaultUser)
 }

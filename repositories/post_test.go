@@ -1,81 +1,76 @@
 package repositories
 
-// import (
-// 	"testing"
-// 	"rgb/services"
-// 	"github.com/stretchr/testify/assert"
-// )
+import (
+	"testing"
 
-// func TestAddPost(t *testing.T) {
-// 	repo := ProvideUserRepository()
-// 	user, err := AddTestUser(repo)
-// 	assert.NoError(t, err)
+	"github.com/stretchr/testify/assert"
+)
 
-// 	post, err := addTestPost(user)
-// 	assert.NoError(t, err)
-// 	assert.Greater(t, post.ID, 0)
-// }
+func TestGetPostsByUserID(t *testing.T) {
+	repos:= NewRepositoriesTest(Memory)
 
-// func TestGetPostsByUserID(t *testing.T) {
-// 	repo := ProvideUserRepository()
-// 	user, err := AddTestUser(repo)
-// 	assert.NoError(t, err)
-// 	post, err := addTestPost(user)
-// 	posts := services.GetPostsByUserID(user.ID)
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, post, posts[0])
-// }
+	user, err := addTestUser(repos)
+	assert.NoError(t, err)
+	post, err := addTestPost(user, repos)
+	posts := repos.Posts.GetPostsByUserID(user.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, post, posts[0])
+}
 
-// func TestGetPostsByUserIDEmpty(t *testing.T) {
-// 	repo := ProvideUserRepository()
-// 	user, err := AddTestUser(repo)
-// 	assert.NoError(t, err)
-// 	posts := services.GetPostsByUserID(user.ID)
-// 	assert.NoError(t, err)
-// 	assert.Empty(t, posts)
-// }
+func TestGetPostsByUserIDEmpty(t *testing.T) {
+	repos:= NewRepositoriesTest(Memory)
 
-// func TestFetchPost(t *testing.T) {
-// 	repo := ProvideUserRepository()
-// 	user, err := AddTestUser(repo)
-// 	assert.NoError(t, err)
-// 	post, err := addTestPost(user)
-// 	fetchedPost, err := services.GetPostByID(post.ID)
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, post.ID, fetchedPost.ID)
-// 	assert.Equal(t, post.Title, fetchedPost.Title)
-// 	assert.Equal(t, post.Content, fetchedPost.Content)
-// 	assert.Equal(t, user.ID, fetchedPost.UserID)
-// }
+	user, err := addTestUser(repos)
+	assert.NoError(t, err)
+	posts := repos.Posts.GetPostsByUserID(user.ID)
+	assert.NoError(t, err)
+	assert.Empty(t, posts)
+}
 
-// func TestFetchNotExistingPost(t *testing.T) {
-// 	fetchedPost, err := services.GetPostByID(100)
-// 	assert.Error(t, err)
-// 	assert.Empty(t, fetchedPost)
-// 	assert.Equal(t, "Post don't exists", err.Error())
-// }
+func TestFetchPost(t *testing.T) {
+	repos:= NewRepositoriesTest(Memory)
 
-// func TestUpdatePost(t *testing.T) {
-// 	repo := ProvideUserRepository()
-// 	user, err := AddTestUser(repo)
-// 	assert.NoError(t, err)
+	user, err := addTestUser(repos)
+	assert.NoError(t, err)
+	post, err := addTestPost(user, repos)
+	fetchedPost, err := repos.Posts.GetPostByID(post.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, post.ID, fetchedPost.ID)
+	assert.Equal(t, post.Title, fetchedPost.Title)
+	assert.Equal(t, post.Content, fetchedPost.Content)
+	assert.Equal(t, user.ID, fetchedPost.UserID)
+}
 
-// 	post, err := addTestPost(user)
-// 	assert.NoError(t, err)
+func TestFetchNotExistingPost(t *testing.T) {
+	repos:= NewRepositoriesTest(Memory)
 
-// 	post.Title = "New title"
-// 	post.Content = "New content"
-// 	_,err = services.UpdatePost(post.ID, post)
-// 	assert.NoError(t, err)
-// }
 
-// func TestDeletePost(t *testing.T) {
-// 	repo := ProvideUserRepository()
-// 	user, err := AddTestUser(repo)
-// 	assert.NoError(t, err)
+	fetchedPost, err := repos.Posts.GetPostByID(100)
+	assert.Error(t, err)
+	assert.Empty(t, fetchedPost)
+	assert.Equal(t, "Post don't exists", err.Error())
+}
 
-// 	post, err := addTestPost(user)
-// 	assert.NoError(t, err)
-// 	err = services.DeletePost(post.ID)
-// 	assert.NoError(t, err)
-// }
+func TestUpdatePost(t *testing.T) {
+	repos:= NewRepositoriesTest(Memory)
+
+	user, err := addTestUser(repos)
+	assert.NoError(t, err)
+	post, err := addTestPost(user, repos)
+	assert.NoError(t, err)
+	post.Title = "New title"
+	post.Content = "New content"
+	_, err = repos.Posts.UpdatePost(post.ID, post)
+	assert.NoError(t, err)
+}
+
+func TestDeletePost(t *testing.T) {
+	repos:= NewRepositoriesTest(Memory)
+
+	user, err := addTestUser(repos)
+	assert.NoError(t, err)
+	post, err := addTestPost(user, repos)
+	assert.NoError(t, err)
+	err = repos.Posts.DeletePost(post.ID)
+	assert.NoError(t, err)
+}
