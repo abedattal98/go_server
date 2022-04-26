@@ -11,7 +11,7 @@ type User struct {
 	ModifiedAt time.Time
 }
 type UserDTO struct {
-	ID         int    `json:"id,string,omitempty"`
+	ID         int    `json:"id"`
 	Username   string `json:"username" binding:"required,min=5,max=30"`
 	Email      string `json:"email"`
 	CreatedAt  time.Time
@@ -19,7 +19,7 @@ type UserDTO struct {
 }
 
 type CreateUserDTO struct {
-	ID         int    `json:"id,string,omitempty"`
+	ID         int    `json:"id"`
 	Username   string `json:"username" binding:"required,min=5,max=30"`
 	Password   string `json:"password" binding:"required,min=7,max=32"`
 	Email      string `json:"email" binding:"required,min=7,max=32"`

@@ -1,47 +1,47 @@
 package services
 
 import (
-	"rgb/domain"
+	"rgb/interfaces"
 	"rgb/models"
-	services "rgb/repositories/interface"
+
 )
 
-type UserService struct {
-	userRepo domain.IUserRepository
+type userService struct {
+	userRepo interfaces.IUserRepository
 }
 
-func ProvideUserService(repo domain.IUserRepository) services.IUserService {
-	return &UserService{
+func NewUsersService(repo interfaces.IUserRepository) interfaces.IUserService {
+	return &userService{
 		userRepo: repo,
 	}
 }
 
-func (p *UserService) FindAll() ([]models.User, error) {
+func (p *userService) FindAll() ([]models.User, error) {
 	return p.userRepo.FindAll()
 }
 
-func (p *UserService) FindByID(id int) (models.User, error) {
+func (p *userService) FindByID(id int) (models.User, error) {
 	users, err := p.userRepo.FindByID(id)
 	return users, err
 }
 
-func (p *UserService) Save(user models.User) (models.User, error) {
+func (p *userService) Save(user models.User) (models.User, error) {
 	user, err := p.userRepo.Save(user)
 
 	return user, err
 }
 
-func (p *UserService) Delete(user models.User) error {
+func (p *userService) Delete(user models.User) error {
 	error := p.userRepo.Delete(user)
 	return error
 }
-func (p *UserService) AddUser(user models.User) (models.User, error) {
+func (p *userService) AddUser(user models.User) (models.User, error) {
 	var err error
 	users, err := p.userRepo.Save(user)
 	return users, err
 }
 
-func (p *UserService) Authenticate(email, password string) (models.User, error) {
+func (p *userService) Authenticate(email, password string) (models.User, error) {
 	users, err := p.userRepo.Authenticate(email, password)
 	return users, err
 }

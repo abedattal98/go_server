@@ -1,16 +1,30 @@
-package controllers
+package api
 
 import (
 	"net/http"
 	"rgb/models"
-	"rgb/services"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func CreatePost(ctx *gin.Context) {
+func (h *Handler) initPostsRoutes(api *gin.RouterGroup) {
+	users := api.Group("/users/:id/posts")
+	{
+		users.GET("/", h.GetPostsByUserID)
+		users.POST("/", h.CreatePost)
+	}
+	posts := api.Group("/posts")
+	{
+		posts.GET("/:id", h.GetPostById)
+		posts.PUT("/:id", h.Update)
+		posts.DELETE("/:id", h.Delete)
+	}
+
+}
+
+func (h *Handler) CreatePost(ctx *gin.Context) {
 	//get user id from param
 	userParamId := ctx.Param("id")
 	//convert user id to integer
@@ -29,8 +43,8 @@ func CreatePost(ctx *gin.Context) {
 	post.CreatedAt = time.Now().UTC()
 	post.ModifiedAt = time.Now().UTC()
 
-	//send the post data to the save services
-	createdPost,err := services.AddPost(userId, *post);
+	//send the post data to the save h.services.Posts
+	createdPost, err := h.services.Posts.AddPost(userId, *post)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -41,7 +55,7 @@ func CreatePost(ctx *gin.Context) {
 	})
 }
 
-func UpdatePost(ctx *gin.Context) {
+func (h *Handler) UpdatePost(ctx *gin.Context) {
 	var updatePostDTO models.UpdatePostDTO
 	err := ctx.BindJSON(&updatePostDTO)
 	if err != nil {
@@ -49,7 +63,7 @@ func UpdatePost(ctx *gin.Context) {
 		return
 	}
 	id, _ := strconv.Atoi(ctx.Param("id"))
-	post, err := services.GetPostByID(id)
+	post, err := h.services.Posts.GetPostByID(id)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -59,7 +73,7 @@ func UpdatePost(ctx *gin.Context) {
 	post.Content = updatePostDTO.Content
 	post.ModifiedAt = time.Now().UTC()
 
-	updatedPost,err := services.UpdatePost(id, post); 
+	updatedPost, err := h.services.Posts.UpdatePost(id, post)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -69,7 +83,7 @@ func UpdatePost(ctx *gin.Context) {
 }
 
 //get posts by user ID
-func GetPostsByUserID(ctx *gin.Context) {
+func (h *Handler) GetPostsByUserID(ctx *gin.Context) {
 	//get user id
 	userParamId := ctx.Param("id")
 	userId, err := strconv.Atoi(userParamId)
@@ -78,7 +92,7 @@ func GetPostsByUserID(ctx *gin.Context) {
 		return
 	}
 	//check all posts to the related user id
-	posts := services.GetPostsByUserID(userId)
+	posts := h.services.Posts.GetPostsByUserID(userId)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg":  "Posts fetched successfully.",
@@ -86,7 +100,7 @@ func GetPostsByUserID(ctx *gin.Context) {
 	})
 }
 
-func GetPostById(ctx *gin.Context) {
+func (h *Handler) GetPostById(ctx *gin.Context) {
 	paramID := ctx.Param("id")
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -94,7 +108,7 @@ func GetPostById(ctx *gin.Context) {
 		return
 	}
 	//check if post exists
-	post, err := services.GetPostByID(id)
+	post, err := h.services.Posts.GetPostByID(id)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -105,7 +119,7 @@ func GetPostById(ctx *gin.Context) {
 	})
 }
 
-func DeletePost(ctx *gin.Context) {
+func (h *Handler) DeletePost(ctx *gin.Context) {
 	paramID := ctx.Param("id")
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -114,14 +128,14 @@ func DeletePost(ctx *gin.Context) {
 	}
 	//check if post exists
 
-	post, err := services.GetPostByID(id)
+	post, err := h.services.Posts.GetPostByID(id)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 	//delete if post exists
 
-	if err := services.DeletePost(post.ID); err != nil {
+	if err := h.services.Posts.DeletePost(post.ID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

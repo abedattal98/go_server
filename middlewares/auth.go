@@ -3,7 +3,7 @@ package middlewares
 import (
 	"errors"
 	"net/http"
-	"rgb/domain"
+	"rgb/interfaces"
 	"rgb/models"
 	"rgb/services/jwt"
 	"strings"
@@ -12,7 +12,7 @@ import (
 )
 
 type AuthMiddleware struct {
-	Repo domain.IUserRepository
+	Repo interfaces.IUserRepository
 }
 
 func (p *AuthMiddleware) Authorization(ctx *gin.Context) {
