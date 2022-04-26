@@ -11,7 +11,7 @@ type PostRepository struct {
 	db *MemoryStorage
 }
 
-func NewPostsRepo(db MemoryStorage) interfaces.IPostRepository {
+func NewPostsRepo(db MemoryStorage) interfaces.PostRepository {
 	return &PostRepository{db: &db}
 }
 func (p *PostRepository) FindAll() ([]models.Post, error) {

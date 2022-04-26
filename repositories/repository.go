@@ -3,8 +3,8 @@ package repositories
 import "rgb/interfaces"
 
 type Repositories struct {
-	Users interfaces.IUserRepository
-	Posts interfaces.IPostRepository
+	Users interfaces.UserRepository
+	Posts interfaces.PostRepository
 }
 
 func NewRepositories(db MemoryStorage) Repositories {

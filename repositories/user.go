@@ -10,7 +10,7 @@ type UserRepository struct {
 	db *MemoryStorage
 }
 
-func NewUsersRepo(db MemoryStorage) interfaces.IUserRepository {
+func NewUsersRepo(db MemoryStorage) interfaces.UserRepository {
 	return &UserRepository{db: &db}
 }
 func (p *UserRepository) FindAll() ([]models.User, error) {

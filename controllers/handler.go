@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"net/http"
-	"rgb/services"
 
 	"rgb/controllers/api"
+	"rgb/services"
 
 	"github.com/gin-gonic/gin"
 )

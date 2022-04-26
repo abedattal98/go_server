@@ -2,12 +2,13 @@ package api
 
 import (
 	"net/http"
-	"rgb/models"
-	"rgb/services/jwt"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
+
+	"rgb/models"
+	"rgb/services/jwt"
 )
 
 func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {

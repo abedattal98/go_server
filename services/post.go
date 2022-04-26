@@ -6,10 +6,10 @@ import (
 )
 
 type postService struct {
-	postRepo interfaces.IPostRepository
+	postRepo interfaces.PostRepository
 }
 
-func NewPostsService(repo interfaces.IPostRepository) interfaces.IPostService {
+func NewPostsService(repo interfaces.PostRepository) interfaces.PostService {
 	return &postService{
 		postRepo: repo,
 	}

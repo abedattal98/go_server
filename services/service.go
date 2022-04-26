@@ -6,8 +6,8 @@ import (
 )
 
 type Services struct {
-	Users interfaces.IUserService
-	Posts interfaces.IPostService
+	Users interfaces.UserService
+	Posts interfaces.PostService
 }
 
 type Deps struct {
