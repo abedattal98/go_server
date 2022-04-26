@@ -17,7 +17,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 	users := api.Group("/users")
 	{
 		users.GET("/", h.FindAll)
-		users.GET("/:id", h.FindByID)
+		users.GET("/:id", h.FindById)
 		users.POST("/", h.Create)
 		users.PUT("/:id", h.Update)
 		users.DELETE("/:id", h.Delete)
@@ -34,9 +34,10 @@ func (h *Handler) FindAll(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"users": models.ToUsersDTOs(users)})
 }
 
-func (h *Handler) FindByID(c *gin.Context) {
+func (h *Handler) FindById(c *gin.Context) {
+	//get user Id from param
 	id, _ := strconv.Atoi(c.Param("id"))
-	user, err := h.services.Users.FindByID(int(id))
+	user, err := h.services.Users.FindById(int(id))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -45,6 +46,7 @@ func (h *Handler) FindByID(c *gin.Context) {
 }
 
 func (h *Handler) Create(c *gin.Context) {
+	//bind the user to the request body
 	var createStudentDTO models.CreateUserDTO
 	err := c.BindJSON(&createStudentDTO)
 	if err != nil {
@@ -54,6 +56,7 @@ func (h *Handler) Create(c *gin.Context) {
 	createStudentDTO.CreatedAt = time.Now().UTC()
 	createStudentDTO.ModifiedAt = time.Now().UTC()
 
+	//save user data
 	createdStudent, err := h.services.Users.Save(models.ToUser2(createStudentDTO))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -70,7 +73,7 @@ func (h *Handler) Update(c *gin.Context) {
 		return
 	}
 	id, _ := strconv.Atoi(c.Param("id"))
-	user, err := h.services.Users.FindByID(int(id))
+	user, err := h.services.Users.FindById(int(id))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -91,7 +94,7 @@ func (h *Handler) Update(c *gin.Context) {
 
 func (h *Handler) Delete(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	user, err := h.services.Users.FindByID(int(id))
+	user, err := h.services.Users.FindById(int(id))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -137,7 +140,7 @@ func (h *Handler) SignIn(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	//validate the LoginDTO
 	loginUser, err := h.services.Users.Authenticate(LoginDTO.Email, LoginDTO.Password)
 
 	if err != nil {

@@ -1,3 +1,5 @@
+// Initialize controllers and routes
+
 package controllers
 
 import (

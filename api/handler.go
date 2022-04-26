@@ -1,4 +1,4 @@
-// Controllers to get all routes from the API
+// API to get all routes from the related controllers
 
 package api
 

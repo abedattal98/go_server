@@ -22,8 +22,9 @@ func (h *Handler) initPostsRoutes(api *gin.RouterGroup) {
 		posts.PUT("/:id", h.Update)
 		posts.DELETE("/:id", h.Delete)
 	}
+
+	//Authoruzation test route
 	authorized := api.Use(middlewares.Authorization)
-	// Init router
 	authorized.GET("/pinggg", func(c *gin.Context) {
 		c.String(http.StatusOK, "ponggg")
 	})
@@ -49,7 +50,7 @@ func (h *Handler) CreatePost(ctx *gin.Context) {
 	post.CreatedAt = time.Now().UTC()
 	post.ModifiedAt = time.Now().UTC()
 
-	//send the post data to the save h.services.Posts
+	//send the post data to the save Posts
 	createdPost, err := h.services.Posts.AddPost(userId, *post)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -68,17 +69,22 @@ func (h *Handler) UpdatePost(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	//check the id if valid
 	id, _ := strconv.Atoi(ctx.Param("id"))
+
+	//check if post exists
 	post, err := h.services.Posts.GetPostByID(id)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
+	//updated post data from the server
 	post.Title = updatePostDTO.Title
 	post.Content = updatePostDTO.Content
 	post.ModifiedAt = time.Now().UTC()
 
+	//update the post
 	updatedPost, err := h.services.Posts.UpdatePost(id, post)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -107,6 +113,7 @@ func (h *Handler) GetPostsByUserID(ctx *gin.Context) {
 }
 
 func (h *Handler) GetPostById(ctx *gin.Context) {
+	//get post id from param
 	paramID := ctx.Param("id")
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -126,6 +133,7 @@ func (h *Handler) GetPostById(ctx *gin.Context) {
 }
 
 func (h *Handler) DeletePost(ctx *gin.Context) {
+	//get post id from param
 	paramID := ctx.Param("id")
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -133,14 +141,12 @@ func (h *Handler) DeletePost(ctx *gin.Context) {
 		return
 	}
 	//check if post exists
-
 	post, err := h.services.Posts.GetPostByID(id)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 	//delete if post exists
-
 	if err := h.services.Posts.DeletePost(post.ID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

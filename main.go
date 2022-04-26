@@ -8,6 +8,5 @@ import (
 
 func main() {
 	// server.Start(conf.NewConfig(env))
-
   server.Start()
 }

@@ -19,7 +19,7 @@ func (p *UserRepository) FindAll() ([]models.User, error) {
 	return users, error(nil)
 }
 
-func (p *UserRepository) FindByID(id int) (models.User, error) {
+func (p *UserRepository) FindById(id int) (models.User, error) {
 	var user models.User
 	for _, u := range p.db.users {
 		if u.ID == id {
