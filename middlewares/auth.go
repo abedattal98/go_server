@@ -3,7 +3,6 @@ package middlewares
 import (
 	"errors"
 	"net/http"
-	"rgb/interfaces"
 	"rgb/models"
 	"rgb/services/jwt"
 	"strings"
@@ -11,11 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthMiddleware struct {
-	Repo interfaces.IUserRepository
-}
 
-func (p *AuthMiddleware) Authorization(ctx *gin.Context) {
+func Authorization(ctx *gin.Context) {
 	authHeader := ctx.GetHeader("Authorization")
 	if authHeader == "" {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing."})
@@ -30,17 +26,17 @@ func (p *AuthMiddleware) Authorization(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing bearer part."})
 		return
 	}
-	userID, err := jwt.VerifyJWT(headerParts[1])
+	userId, err := jwt.VerifyJWT(headerParts[1])
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	user, err := p.Repo.FetchUser(userID)
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-	ctx.Set("user", user)
+	// user, err := p.Repos.Users.FetchUser(userID)
+	// if err != nil {
+	// 	ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	ctx.Set("userId", userId)
 	ctx.Next()
 }
 

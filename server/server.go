@@ -22,7 +22,6 @@ func Start() {
 	})
 
 	handlers := controllers.NewHandler(services)
-	
 	srv := NewServer(handlers.Init())
 	srv.Run()
 }

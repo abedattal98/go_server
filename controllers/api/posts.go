@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"rgb/middlewares"
 	"rgb/models"
 	"strconv"
 	"time"
@@ -21,6 +22,11 @@ func (h *Handler) initPostsRoutes(api *gin.RouterGroup) {
 		posts.PUT("/:id", h.Update)
 		posts.DELETE("/:id", h.Delete)
 	}
+	authorized := api.Use(middlewares.Authorization)
+	// Init router
+	authorized.GET("/pinggg", func(c *gin.Context) {
+		c.String(http.StatusOK, "ponggg")
+	})
 
 }
 

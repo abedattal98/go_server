@@ -6,6 +6,6 @@ import (
 
 // Memory data storage layered save only in memory
 type MemoryStorage struct {
-	users  []models.User
+	users []models.User
 	posts []models.Post
 }
