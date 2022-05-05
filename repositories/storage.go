@@ -20,10 +20,10 @@ var DB Storage
 func NewStorage(t Type) *MemoryStorage {
 	switch t {
 	case Memory:
-		return new(MemoryStorage)
+		return NewMemoryStorage()
 
 	case JSON:
-		// for the moment storage location for JSON files is the current working directory
+		return nil
 	}
 
 	return nil

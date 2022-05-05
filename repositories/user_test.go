@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"reflect"
 	"rgb/models"
 	"testing"
 	"time"
@@ -54,4 +55,53 @@ func TestAuthenticateUserInvalidPassword(t *testing.T) {
 	authUser, err := repos.Users.Authenticate(createUser.Username, "invalid")
 	assert.Error(t, err)
 	assert.Empty(t, authUser)
+}
+
+func TestUserRepository_Save(t *testing.T) {
+	type fields struct {
+		db *MemoryStorage
+	}
+	type args struct {
+		user models.User
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    models.User
+		wantErr bool
+	}{
+		{ // Test case 1
+			name: "Test case 1",
+			fields: fields{
+				db: NewMemoryStorage(),
+			},
+			args: args{
+				user: models.User{
+					Username: "rand.String(10)",
+					Password: "secret123",
+				},
+			},
+			want: models.User{
+				Username: "rand.String(10)",
+				Password: "secret123",
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &UserRepository{
+				db: tt.fields.db,
+			}
+			got, err := p.Save(tt.args.user)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.Save() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UserRepository.Save() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
